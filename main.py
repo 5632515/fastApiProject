@@ -1,3 +1,4 @@
+import base64
 import json
 from datetime import datetime, timedelta
 from typing import Union
@@ -5,24 +6,20 @@ from typing import Union
 import requests
 import rsa
 import uvicorn
-from fastapi import Depends, FastAPI, HTTPException, status
+from Crypto.Cipher import PKCS1_v1_5
+from Crypto.PublicKey import RSA
+from fastapi import Depends, FastAPI, status, HTTPException
 from fastapi.logger import logger
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from fastapi import Depends, FastAPI, status, HTTPException
-
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_v1_5
-import base64
 
 import pw
 import pw2
 import pw3
 import pw4
 import pw5
-import rsatest
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -219,4 +216,4 @@ def create_item(user: Query, current_user: User = Depends(get_current_active_use
 
 # 启动主程序
 if __name__ == '__main__':
-    uvicorn.run(app='main:app', reload=True, host="0.0.0.0", port=7000)
+    uvicorn.run(app='main:app', reload=True, host="0.0.0.0", port=7500)
