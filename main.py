@@ -84,7 +84,7 @@ SERVER = "http://211.138.245.9:10010/dataServer"
 
 
 def encrypt_for_backend(origin_text, public_key):
-    pk = rsa.PublicKey.load_pkcs1(public_key.encode('utf-8'))
+    pk = rsa.PublicKey.load_pkcs1(public_key.encode("utf-8"))
 
 
 def verify_password(plain_password, hashed_password):
@@ -107,14 +107,16 @@ def get_token(username, password):
     api_url = SERVER + "/auth/loginWithoutVerify"
     data = {"username": username, "password": pw_encrypted}
     data_json = json.dumps(data)
-    response = requests.post(api_url, data=data_json, headers={'Content-Type': 'application/json'})
+    response = requests.post(
+        api_url, data=data_json, headers={"Content-Type": "application/json"}
+    )
     if response.status_code != 200:
-        raise ConnectionError(f'{api_url} status code is {response.status_code}.')
+        raise ConnectionError(f"{api_url} status code is {response.status_code}.")
     response_load = json.loads(response.content)
-    if not response_load['success']:
-        error = response_load['code']
-        raise ConnectionError(f'{api_url} status code is {error}.')
-    return response_load['data']
+    if not response_load["success"]:
+        error = response_load["code"]
+        raise ConnectionError(f"{api_url} status code is {error}.")
+    return response_load["data"]
 
 
 def authenticate_user(fake_db, username: str, password: str):
@@ -143,7 +145,9 @@ def get_info(origin_token):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        info = requests.get(url=SERVER + "/auth/info", headers={'Authorization': origin_token})
+        info = requests.get(
+            url=SERVER + "/auth/info", headers={"Authorization": origin_token}
+        )
         return json.loads(info.content)
     except:
         raise info_exception
@@ -186,9 +190,9 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user['token']}, expires_delta=access_token_expires
+        data={"sub": user["token"]}, expires_delta=access_token_expires
     )
-    logger.log(msg='return token', level=1)
+    logger.log(msg="return token", level=1)
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -207,13 +211,21 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
 
 
-@app.post('/api/query')  # Item是json的校验
-def create_item(user: Query, current_user: User = Depends(get_current_active_user)):  # 参数放在请求体内，传入JSON数据
-    result = [pw.start(user.name, user.ID), pw2.start(user.name, user.ID), pw3.start(user.name, user.ID),
-              pw4.start(user.name, user.ID), pw5.start(user.name, user.ID)]
+@app.post("/api/query")  # Item是json的校验
+def create_item(
+    user: Query, current_user: User = Depends(get_current_active_user)
+):  # 参数放在请求体内，传入JSON数据
+    print(user.name, user.ID)
+    result = [
+        pw.start(user.name, user.ID),
+        pw2.start(user.name, user.ID),
+        pw3.start(user.name, user.ID),
+        pw4.start(user.name, user.ID),
+        pw5.start(user.name, user.ID),
+    ]
     return result
 
 
 # 启动主程序
-if __name__ == '__main__':
-    uvicorn.run(app='main:app', reload=True, host="0.0.0.0", port=7500)
+if __name__ == "__main__":
+    uvicorn.run(app="main:app", reload=True, host="0.0.0.0", port=7500)
