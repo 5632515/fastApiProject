@@ -225,6 +225,16 @@ def create_item(
     ]
     return result
 
+@app.post("/api/query1")  # Item是json的校验
+def create_item(
+    user: Query, current_user: User = Depends(get_current_active_user)
+):  # 参数放在请求体内，传入JSON数据
+    print(user.name, user.ID)
+    result = [
+        pw.start(user.name, user.ID)
+    ]
+    return result
+
 
 # 启动主程序
 if __name__ == "__main__":

@@ -33,22 +33,18 @@ def run(playwright: Playwright, name, ID):
     page.on("dialog", handle_dialog)
     ok = True
     man_info = [[name, ID, 1]]
-    while True:
-        put_into(page, name, ID)
-        page.get_by_role("button", name="立即查询").click()
-        page.wait_for_timeout(1000)
-        tr_nums = len(page.query_selector_all('tr'))
-        if tr_nums == 7:
-            print('未查询到相关信息')
-            return man_info
-        page.get_by_role("button", name="查看详情").click()
-        page.wait_for_selector("#CERTIFICATE_NUMBER")
-        if ok:
-            break
-        else:
-            page.goto(website_1)
+    put_into(page, name, ID)
+    page.get_by_role("button", name="立即查询").click()
+    page.wait_for_timeout(1000)
+    if ok == False:
+        return man_info
+    tr_nums = len(page.query_selector_all('tr'))
+    if tr_nums == 7:
+        print('未查询到相关信息')
+        return man_info
+    page.get_by_role("button", name="查看详情").click()
+    page.wait_for_selector("#CERTIFICATE_NUMBER")
     # page.wait_for_event("li:#CERTIFICATE_NUMBER")
-
     # print("证书号：" + page.query_selector("#CERTIFICATE_NUMBER").text_content())
     # print("有效期：" + page.query_selector("#END_DATE").text_content())
     date_string = page.query_selector("#END_DATE").text_content()
